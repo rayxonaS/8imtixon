@@ -15,17 +15,31 @@ export default function ThemesToggler() {
     document.documentElement.dataset.theme.startsWith("dark-")
   );
 
+  const [theme, setTheme] = useState(document.documentElement.dataset.theme);
+
   const { themes } = useAppStore();
-  function handleTheme() {}
+  function handleTheme(el) {
+    if (dark) {
+      const value = `dark-${el}`;
+      document.documentElement.dataset.theme = value;
+      setTheme(value);
+    } else {
+      document.documentElement.dataset.theme = `${el}`;
+      setTheme(el);
+    }
+  }
   function handleDark() {
     setDrak(!dark);
   }
 
   useEffect(() => {
     if (dark) {
-      document.documentElement.dataset.theme = "dark-default";
+      const value = `dark-${theme}`;
+      document.documentElement.dataset.theme = value;
+      setTheme(value);
     } else {
-      document.documentElement.dataset.theme = "default";
+      document.documentElement.dataset.theme = theme;
+      setTheme(theme);
     }
   }, [dark]);
   return (
@@ -41,9 +55,16 @@ export default function ThemesToggler() {
           <DropdownMenuLabel>Themes</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <div className="flex flex-col">
-            {themes.map((el) => {
+            {themes.map((el, index) => {
               return (
-                <Button className={"justify-start"} variant="ghost">
+                <Button
+                  key={index}
+                  onClick={() => {
+                    handleTheme(el);
+                  }}
+                  className={"justify-start"}
+                  variant="ghost"
+                >
                   {el}
                 </Button>
               );
