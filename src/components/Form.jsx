@@ -14,6 +14,7 @@ import { prepareData } from "../lib/utils";
 import { useAppStore } from "../lib/zustand";
 import { useEffect, useState } from "react";
 import { addInvoice, updateById } from "../request";
+import { useNavigate } from "react-router-dom";
 
 export default function Form({ info, setSheetOpen }) {
   const { items: zustandItems } = useAppStore();
@@ -28,8 +29,9 @@ export default function Form({ info, setSheetOpen }) {
     paymentDue,
     createdAt,
   } = info || {};
+  const navigate = useNavigate();
   const [sending, SetSending] = useState(null);
-  const [updating, setUpdating] = useState(false);
+  const [updating, setUpdating] = useState(null);
   const [loading, setLoading] = useState(false);
   const { setInvoices, updateInvoices } = useAppStore();
 
@@ -49,45 +51,45 @@ export default function Form({ info, setSheetOpen }) {
     });
     result.items = zustandItems;
     const readyData = prepareData(result);
-    if (e.nativeEvent.submitter.id !== "edit") {
-      SetSending(readyData);
-    } else {
-      setUpdating(true);
-    }
+    SetSending({
+      mode: e.nativeEvent.submitter.id === "edit" ? "edit" : "add",
+      data: readyData,
+    });
   }
-
-  useEffect(() => {
-    if (updating) {
-      updateById(id, data)
-        .then((res) => {
-          updateInvoices(res);
-          navigate(-1);
-        })
-        .catch(({ message }) => {
-          console.log(message);
-        })
-        .finally(() => {
-          setUpdateLoading(false);
-        });
-    }
-  }, [updating]);
 
   useEffect(() => {
     if (sending) {
       setLoading(true);
-      addInvoice(sending)
-        .then((res) => {
-          updateInvoices(res);
-          console.log(res);
-          setSheetOpen(false);
-        })
-        .catch(({ message }) => {
-          console.log(message);
-        })
-        .finally(() => {
-          setLoading(false);
-          SetSending(null);
-        });
+      if (sending.mode === "add") {
+        addInvoice(sending)
+          .then((res) => {
+            updateInvoices(res);
+            console.log(res);
+            setSheetOpen(false);
+          })
+          .catch(({ message }) => {
+            console.log(message);
+          })
+          .finally(() => {
+            setLoading(false);
+            SetSending(null);
+          });
+      } else if (sending.mode === "edit") {
+        updateById(info.id, sending.data)
+          .then((res) => {
+            updateInvoices(res);
+            console.log(res);
+            navigate(-1);
+            setSheetOpen(false);
+          })
+          .catch(({ message }) => {
+            console.log(message);
+          })
+          .finally(() => {
+            setLoading(false);
+            SetSending(null);
+          });
+      }
     }
   }, [sending ? JSON.stringify(sending) : sending]);
   return (
