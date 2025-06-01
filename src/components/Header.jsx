@@ -5,24 +5,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+
 import { useEffect, useState } from "react";
 import { queryGenerator } from "../lib/utils";
 import { Button, buttonVariants } from "./ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ArrowBigDown, PlusCircleIcon } from "lucide-react";
 import { useAppStore } from "../lib/zustand";
-import Form from "./Form";
 
 function Header() {
-  const [sheetOpen, setSheetOpen] = useState(false);
+  const { setSheetOpen } = useAppStore();
   const { setFilter } = useAppStore();
   const [items, setItems] = useState({
     draft: false,
@@ -81,21 +73,10 @@ function Header() {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-          <SheetTrigger className={buttonVariants({ variant: "default:" })}>
-            <PlusCircleIcon />
-            New Invoice
-          </SheetTrigger>
-          <SheetContent
-            className="ml-[72px] min-w-[700px] min-h-[calc(100%-56px)] overflow-y-scroll "
-            side="left"
-          >
-            <SheetHeader className="sticky top-0 w-full bg-white border-b">
-              <SheetTitle>Are you absolutely sure?</SheetTitle>
-            </SheetHeader>
-            <Form setSheetOpen={setSheetOpen} info={null} />
-          </SheetContent>
-        </Sheet>
+        <Button onClick={setSheetOpen}>
+          <PlusCircleIcon />
+          New Invoice
+        </Button>
       </div>
     </header>
   );

@@ -13,7 +13,7 @@ import { Button } from "./ui/button";
 import { prepareData } from "../lib/utils";
 import { useAppStore } from "../lib/zustand";
 import { useEffect, useState } from "react";
-import { addInvoice } from "../request";
+import { addInvoice, updateById } from "../request";
 
 export default function Form({ info, setSheetOpen }) {
   const { items: zustandItems } = useAppStore();
@@ -29,13 +29,17 @@ export default function Form({ info, setSheetOpen }) {
     createdAt,
   } = info || {};
   const [sending, SetSending] = useState(null);
+  const [updating, setUpdating] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { setInvoices } = useAppStore();
+  const { setInvoices, updateInvoices } = useAppStore();
 
   function handleSubmit(e) {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const result = { status: e.nativeEvent.submitter.id };
+    const result = {};
+    if (!info) {
+      result.status = e.nativeEvent.submitter.id;
+    }
     formData.forEach((value, key) => {
       if (key === "quantity" || key === "price" || key === "paymentTerms") {
         result[key] = Number(value);
@@ -45,15 +49,35 @@ export default function Form({ info, setSheetOpen }) {
     });
     result.items = zustandItems;
     const readyData = prepareData(result);
-    SetSending(readyData);
+    if (e.nativeEvent.submitter.id !== "edit") {
+      SetSending(readyData);
+    } else {
+      setUpdating(true);
+    }
   }
+
+  useEffect(() => {
+    if (updating) {
+      updateById(id, data)
+        .then((res) => {
+          updateInvoices(res);
+          navigate(-1);
+        })
+        .catch(({ message }) => {
+          console.log(message);
+        })
+        .finally(() => {
+          setUpdateLoading(false);
+        });
+    }
+  }, [updating]);
 
   useEffect(() => {
     if (sending) {
       setLoading(true);
       addInvoice(sending)
         .then((res) => {
-          setInvoices([res]);
+          updateInvoices(res);
           console.log(res);
           setSheetOpen(false);
         })
@@ -65,7 +89,7 @@ export default function Form({ info, setSheetOpen }) {
           SetSending(null);
         });
     }
-  }, [JSON.stringify(sending)]);
+  }, [sending ? JSON.stringify(sending) : sending]);
   return (
     <form onSubmit={handleSubmit} className="p-4 pt-14">
       <div className="mb-10">
@@ -232,7 +256,7 @@ export default function Form({ info, setSheetOpen }) {
       {info ? (
         <div className="flex justify-end gap-5 mt-10">
           <Button variant={"outline"}>Cancel</Button>
-          <Button disabled={loading}>
+          <Button id="edit" disabled={loading}>
             {loading ? "Loading..." : "Save Changes"}
           </Button>
         </div>

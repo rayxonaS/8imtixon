@@ -18,15 +18,18 @@ import {
 
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { deleteById, getInvoice } from "../request";
+import { deleteById, getInvoice, updateById } from "../request";
 import StatusBadge from "../components/StatusBadge";
 import { Button, buttonVariants } from "../components/ui/button";
 import { DialogClose } from "@radix-ui/react-dialog";
+import { useAppStore } from "../lib/zustand";
 
 export default function Details() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { updateInvoices, setSheetOpen, setEditedData } = useAppStore();
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [updateLoading, setUpdateLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [invoice, setInvoice] = useState([]);
@@ -59,6 +62,26 @@ export default function Details() {
       });
   }
 
+  function handleUpdate(id, data) {
+    setUpdateLoading(true);
+    updateById(id, data)
+      .then((res) => {
+        updateInvoices(res);
+        navigate(-1);
+      })
+      .catch(({ message }) => {
+        console.log(message);
+      })
+      .finally(() => {
+        setUpdateLoading(false);
+      });
+  }
+
+  function handleEdit(data) {
+    setSheetOpen();
+    setEditedData(data);
+  }
+
   if (loading) {
     return <p>Loading</p>;
   }
@@ -76,7 +99,14 @@ export default function Details() {
               <StatusBadge status={invoice.status} />
             </div>
             <div className="flex gap-3">
-              <Button variant="ghost">Edit</Button>
+              <Button
+                onClick={() => {
+                  handleEdit(invoice);
+                }}
+                variant="ghost"
+              >
+                Edit
+              </Button>
               <Dialog>
                 <DialogTrigger
                   className={buttonVariants({ variant: "destructive" })}
@@ -107,7 +137,15 @@ export default function Details() {
                   </div>
                 </DialogContent>
               </Dialog>
-              {invoice.status === "pending" && <Button>Mark as Paid</Button>}
+              {invoice.status === "pending" && (
+                <>
+                  <Button
+                    onClick={() => handleUpdate(invoice.id, { status: "paid" })}
+                  >
+                    {updateLoading ? "Loading..." : "Mark as Read"}
+                  </Button>
+                </>
+              )}
             </div>
           </CardContent>
         </Card>

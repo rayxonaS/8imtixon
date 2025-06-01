@@ -33,6 +33,9 @@ export async function deleteById(id) {
 export async function updateById(id, newData) {
   const req = await fetch(baseURL + `/${id}`, {
     method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(newData),
   });
   if (req.status === 200) {
