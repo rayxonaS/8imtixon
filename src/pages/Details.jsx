@@ -17,14 +17,16 @@ import {
 } from "@/components/ui/dialog";
 
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { getInvoice } from "../request";
+import { useNavigate, useParams } from "react-router-dom";
+import { deleteById, getInvoice } from "../request";
 import StatusBadge from "../components/StatusBadge";
 import { Button, buttonVariants } from "../components/ui/button";
 import { DialogClose } from "@radix-ui/react-dialog";
 
 export default function Details() {
+  const navigate = useNavigate();
   const { id } = useParams();
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [invoice, setInvoice] = useState([]);
@@ -42,6 +44,20 @@ export default function Details() {
         setLoading(false);
       });
   }, []);
+
+  function handleDelete(id) {
+    setDeleteLoading(true);
+    deleteById(id)
+      .then((res) => {
+        navigate("/");
+      })
+      .catch(({ message }) => {
+        console.log(message);
+      })
+      .finally(() => {
+        setDeleteLoading(false);
+      });
+  }
 
   if (loading) {
     return <p>Loading</p>;
@@ -81,11 +97,17 @@ export default function Details() {
                     >
                       Cancel
                     </DialogClose>
-                    <Button variant="destructive">Delete</Button>
+                    <Button
+                      disabled={deleteLoading}
+                      onClick={() => handleDelete(invoice.id)}
+                      variant="destructive"
+                    >
+                      {deleteLoading ? "Loading..." : "Delete"}
+                    </Button>
                   </div>
                 </DialogContent>
               </Dialog>
-              <Button>Mark as Paid</Button>
+              {invoice.status === "pending" && <Button>Mark as Paid</Button>}
             </div>
           </CardContent>
         </Card>

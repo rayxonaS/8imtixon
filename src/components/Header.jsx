@@ -22,6 +22,7 @@ import { useAppStore } from "../lib/zustand";
 import Form from "./Form";
 
 function Header() {
+  const [sheetOpen, setSheetOpen] = useState(false);
   const { setFilter } = useAppStore();
   const [items, setItems] = useState({
     draft: false,
@@ -80,7 +81,7 @@ function Header() {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <Sheet>
+        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
           <SheetTrigger className={buttonVariants({ variant: "default:" })}>
             <PlusCircleIcon />
             New Invoice
@@ -92,7 +93,7 @@ function Header() {
             <SheetHeader className="sticky top-0 w-full bg-white border-b">
               <SheetTitle>Are you absolutely sure?</SheetTitle>
             </SheetHeader>
-            <Form info={null} />
+            <Form setSheetOpen={setSheetOpen} info={null} />
           </SheetContent>
         </Sheet>
       </div>

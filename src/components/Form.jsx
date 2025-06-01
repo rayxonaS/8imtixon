@@ -15,7 +15,7 @@ import { useAppStore } from "../lib/zustand";
 import { useEffect, useState } from "react";
 import { addInvoice } from "../request";
 
-export default function Form({ info }) {
+export default function Form({ info, setSheetOpen }) {
   const { items: zustandItems } = useAppStore();
   const {
     clientAddress,
@@ -55,6 +55,7 @@ export default function Form({ info }) {
         .then((res) => {
           setInvoices([res]);
           console.log(res);
+          setSheetOpen(false);
         })
         .catch(({ message }) => {
           console.log(message);
