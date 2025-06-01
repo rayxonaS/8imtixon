@@ -5,19 +5,28 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { useEffect, useState } from "react";
 import { queryGenerator } from "../lib/utils";
 import { Button, buttonVariants } from "./ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ArrowBigDown, PlusCircleIcon } from "lucide-react";
 import { useAppStore } from "../lib/zustand";
+import Form from "./Form";
 
 function Header() {
   const { setFilter } = useAppStore();
   const [items, setItems] = useState({
-    draft: true,
-    paid: true,
-    pending: true,
+    draft: false,
+    paid: false,
+    pending: false,
   });
 
   function handleChange(key) {
@@ -29,10 +38,10 @@ function Header() {
   useEffect(() => {
     const query = queryGenerator(items);
     setFilter(query);
-  }, [items]);
+  }, [JSON.stringify(items)]);
   return (
     <header>
-      <div className="container mx-auto px-15 flex items-center justify-between py-10">
+      <div className=" w-full max-w-[730px] mx-auto px-20 pr-5 pl-5 md:pl-20 flex items-center justify-between py-10">
         <div>
           <h1>Invoices</h1>
           <p>There are 7 total invoices</p>
@@ -70,10 +79,22 @@ function Header() {
             </div>
           </DropdownMenuContent>
         </DropdownMenu>
-        <Button>
-          <PlusCircleIcon />
-          New Invoice
-        </Button>
+
+        <Sheet>
+          <SheetTrigger className={buttonVariants({ variant: "default:" })}>
+            <PlusCircleIcon />
+            New Invoice
+          </SheetTrigger>
+          <SheetContent
+            className="ml-[72px] min-w-[700px] min-h-[calc(100%-56px)] overflow-y-scroll "
+            side="left"
+          >
+            <SheetHeader className="sticky top-0 w-full bg-white border-b">
+              <SheetTitle>Are you absolutely sure?</SheetTitle>
+            </SheetHeader>
+            <Form info={null} />
+          </SheetContent>
+        </Sheet>
       </div>
     </header>
   );

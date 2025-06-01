@@ -9,7 +9,6 @@ import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 function MyCard({
-  invoiceId = "RT30B0",
   createdAt = "Due 19 Aug 2021",
   clientName = "Jensen Huang",
   price = "1,800.90",
@@ -26,7 +25,7 @@ function MyCard({
     >
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle>#{invoiceId}</CardTitle>
+          <CardTitle>#{id}</CardTitle>
           <CardDescription>{createdAt}</CardDescription>
           <span>{clientName}</span>
           <span>{price}</span>

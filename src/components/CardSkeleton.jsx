@@ -9,7 +9,7 @@ import { Skeleton } from "./ui/skeleton";
 
 export default function CardSkeleton({ length = 7 }) {
   return (
-    <div className="flex flex-col gap-4 container mx-auto px-15">
+    <div className="flex flex-col gap-4 w-full max-w-[730px] mx-auto px-15 pr-5 pl-5 md:pl-20">
       {Array(length)
         .fill(0)
         .map((_, index) => {

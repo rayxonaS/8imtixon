@@ -7,47 +7,58 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useEffect, useState } from "react";
 import { useAppStore } from "../lib/zustand";
-import { ArrowBigDown, Moon, Sun } from "lucide-react";
+import { ArrowBigDown, Icon, Moon, Sun } from "lucide-react";
 import { Button } from "./ui/button";
 
 export default function ThemesToggler() {
-  const [dark, setDrak] = useState(
-    document.documentElement.dataset.theme.startsWith("dark-")
+  const { themes } = useAppStore();
+
+  const [theme, setTheme] = useState(
+    localStorage.getItem("theme") || "default"
   );
 
-  const [theme, setTheme] = useState(document.documentElement.dataset.theme);
-
-  const { themes } = useAppStore();
-  function handleTheme(el) {
-    if (dark) {
-      const value = `dark-${el}`;
-      document.documentElement.dataset.theme = value;
-      setTheme(value);
+  function handleTheme(type, mode) {
+    const html = document.documentElement;
+    let isDark;
+    if (html.dataset.theme.startsWith("dark-")) {
+      isDark = true;
     } else {
-      document.documentElement.dataset.theme = `${el}`;
-      setTheme(el);
+      isDark = false;
     }
-  }
-  function handleDark() {
-    setDrak(!dark);
+
+    if (mode === "theme") {
+      if (isDark) {
+        html.dataset.theme = `dark-${type}`;
+        setTheme(`dark-${type}`);
+      } else {
+        html.dataset.theme = type;
+        setTheme(type);
+      }
+    } else if (mode === "dark") {
+      if (type.startsWith("dark-")) {
+        html.dataset.theme = type.replace("dark-", "");
+        setTheme(type.replace("dark-", ""));
+      } else {
+        html.dataset.theme = `dark-${type}`;
+        setTheme(`dark-${type}`);
+      }
+    }
   }
 
   useEffect(() => {
-    if (dark) {
-      const value = `dark-${theme}`;
-      document.documentElement.dataset.theme = value;
-      setTheme(value);
-    } else {
-      document.documentElement.dataset.theme = theme;
-      setTheme(theme);
-    }
-  }, [dark]);
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+  }, []);
+
   return (
-    <div className="flex gap-5">
+    <div className="flex gap-5 md:flex-col md:items-start">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="secondary">
-            Change Theme
+            <span className="md:hidden">Change Theme</span>
             <ArrowBigDown />
           </Button>
         </DropdownMenuTrigger>
@@ -60,7 +71,7 @@ export default function ThemesToggler() {
                 <Button
                   key={index}
                   onClick={() => {
-                    handleTheme(el);
+                    handleTheme(el, "theme");
                   }}
                   className={"justify-start"}
                   variant="ghost"
@@ -72,7 +83,14 @@ export default function ThemesToggler() {
           </div>
         </DropdownMenuContent>
       </DropdownMenu>
-      <Button onClick={handleDark}>{dark ? <Sun /> : <Moon />}</Button>
+      <Button
+        size={Icon}
+        onClick={() => {
+          handleTheme(theme, "dark");
+        }}
+      >
+        {theme.startsWith("dark-") ? <Sun /> : <Moon />}
+      </Button>
     </div>
   );
 }
