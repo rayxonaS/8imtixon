@@ -49,3 +49,150 @@
     @apply bg-background text-foreground;
   }
 }
+
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: "League Spartan";
+  font-style: normal;
+  font-weight: 400;
+  src: url("../fonts/league-spartan-v11-latin-regular.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+/* league-spartan-regular - latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: "League Spartan";
+  font-style: normal;
+  font-weight: 400;
+  src: url("../fonts/league-spartan-v11-latin-regular.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+/* league-spartan-600 - latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: "League Spartan";
+  font-style: normal;
+  font-weight: 600;
+  src: url("../fonts/league-spartan-v11-latin-600.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+/* league-spartan-700 - latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: "League Spartan";
+  font-style: normal;
+  font-weight: 700;
+  src: url("../fonts/league-spartan-v11-latin-700.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  .base_container {
+    @apply container px-5;
+  }
+  html {
+    font-family: "League Spartan";
+  }
+}
+
+body {
+  font-family: "League Spartan", sans-serif;
+}
+
+.form__container {
+  max-width: 100%;
+  padding-left: 10px;
+  padding-right: 10px;
+  box-sizing: border-box;
+}
+
+.sidebar__content {
+  border-radius: 0 0 20px 0;
+}
+
+.base_container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.details_container {
+  max-width: 680px;
+  border-radius: 12px;
+  margin-left: 12px;
+  margin-right: 12px;
+  margin: 0 auto;
+}
+
+#sideBar_right {
+  display: flex;
+  align-items: center !important;
+  /* justify-content: center;  */
+}
+
+.sidebar_hr {
+  /* transform: rotate(90deg); */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@media (max-width: 500px) {
+  .detailsEmailFlex {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 500px) {
+  .modalCss {
+    min-width: calc(100%);
+  }
+  .details__items {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 1400px) {
+  .details__buttons__footer {
+    display: none;
+  }
+}
+
+@media (max-width: 500px) {
+  .details__buttons {
+    display: none;
+  }
+  .invoiceAdd {
+    max-width: 110x;
+  }
+
+  .details__buttons__footer {
+    display: flex;
+  }
+}
+
+.cards {
+  display: flex;
+  align-items: center;
+  gap: 27px;
+}
+
+@media (max-width: 585px) {
+  .cards {
+    display: flex;
+    flex-direction: column;
+  }
+  .cordArrow {
+    display: none;
+  }
+}
