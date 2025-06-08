@@ -53,9 +53,9 @@ function Details() {
 
   function handleDelete(id) {
     setDeleteLoading(true);
-    deleteById({ id })
+    deleteById(id)
       .then(() => {
-        toast.success("Ma'lumot muvaffaqiyatli o‘chirildi!");
+        console.log("Ma'lumot muvaffaqiyatli o‘chirildi!");
         navigate("/");
       })
       .catch((err) => {
